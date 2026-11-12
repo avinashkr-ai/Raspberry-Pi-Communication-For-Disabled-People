@@ -1,0 +1,26 @@
+[Unit]
+Description=SceneVoice voice controlled photo description
+After=network.target sound.target
+StartLimitIntervalSec=120
+StartLimitBurst=10
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+SupplementaryGroups=audio video render
+WorkingDirectory=/opt/heybot
+EnvironmentFile=/home/pi/.config/heybot/heybot.env
+Environment=PYTHONUNBUFFERED=1
+Environment=HEYBOT_STATE_DIR=/home/pi/.local/state/heybot
+ExecStart=/opt/heybot/.venv/bin/python -m heybot
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=45
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

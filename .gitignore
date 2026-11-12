@@ -1,0 +1,37 @@
+/configuration/
+/images/
+/known_hosts
+/logs/
+/.tools/
+/diagnostics/
+/.secrets/
+__pycache__/
+*.pyc
+/heybot/.venv/
+/heybot/models/
+/heybot/*.env
+/heybot/.state/
+
+# Private setup records from preparing this particular Raspberry Pi.
+/SETUP.md
+/verification.json
+/audit-card-accounts.py
+/finalize-card.py
+/inspect-linux.py
+/network-report.sh
+/pi-wifi-repair.sh
+/prepare-wifi-repair.py
+/heybot/VERIFICATION.md
+
+# Local credentials, recordings, and runtime files are never source code.
+.DS_Store
+._*
+.env
+.env.*
+!.env.example
+dashboard-password
+web-session-secret
+*.sqlite3
+*.sqlite3-*
+photos/
+*.wav

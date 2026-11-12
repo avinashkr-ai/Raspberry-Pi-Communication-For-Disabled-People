@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="csrf-token" content="{{ session.csrf }}"><title>SceneVoice — Camera workspace</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static',filename='logo.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='theme.css') }}">
+  <meta name="theme-color" content="#0e141e">
+  <script defer src="{{ url_for('static',filename='app.js') }}"></script>
+</head>
+<body>
+<svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+  <symbol id="camera-icon" viewBox="0 0 24 24"><path d="M8 5l1.5-2h5L16 5h4a2 2 0 0 1 2 2v12H2V7a2 2 0 0 1 2-2z"/><circle cx="12" cy="12" r="4"/></symbol>
+  <symbol id="grid-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+  <symbol id="history-icon" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2 7M3 4v7h7m2-4v6l4 2"/></symbol>
+  <symbol id="device-icon" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M8 2v3m8-3v3M8 19v3m8-3v3M2 8h3m-3 8h3m14-8h3m-3 8h3"/></symbol>
+  <symbol id="arrow-icon" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+  <symbol id="refresh-icon" viewBox="0 0 24 24"><path d="M20 10a8 8 0 1 0-2 8m2-15v7h-7"/></symbol>
+  <symbol id="volume-icon" viewBox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zm13-1a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+  <symbol id="expand-icon" viewBox="0 0 24 24"><path d="M3 9V3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6"/></symbol>
+  <symbol id="check-icon" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="close-icon" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+</defs></svg>
+<div class="app-layout">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="SceneVoice home"><img class="brand-logo" src="{{ url_for('static',filename='logo.svg') }}" width="36" height="36" alt=""><span>SceneVoice<span class="brand-subtitle">PHOTO TO VOICE</span></span></a>
+    <p class="nav-label">WORKSPACE</p>
+    <nav aria-label="Main navigation">
+      <button class="nav-item active" data-view="workspace"><svg><use href="#grid-icon"/></svg>Overview</button>
+      <button class="nav-item" data-view="sessions"><svg><use href="#history-icon"/></svg>Sessions<span id="nav-count" class="nav-count">0</span></button>
+      <button class="nav-item" data-view="device"><svg><use href="#device-icon"/></svg>Device</button>
+    </nav>
+    <div class="sidebar-note"><span class="small-led"></span><div>Local workspace<p>Photos & history stay on your Pi.</p></div></div>
+    <div class="sidebar-device"><span class="device-avatar"><svg><use href="#device-icon"/></svg></span><div><strong id="sidebar-host">Raspberry Pi</strong><span id="sidebar-ip">Connecting…</span></div><span id="sidebar-led" class="small-led"></span></div>
+  </aside>
+  <div class="main-shell">
+    <header class="topbar"><div class="breadcrumb"><span class="header-brand">SceneVoice</span> <span>/</span> <strong id="view-breadcrumb">Overview</strong></div><div class="header-actions"><span id="clock"></span><button id="refresh" class="icon-button" aria-label="Refresh device status"><svg><use href="#refresh-icon"/></svg></button><form action="/logout" method="post"><input type="hidden" name="csrf" value="{{ session.csrf }}"><button class="text-button" type="submit">Sign out</button></form></div></header>
+    <main>
+      <div class="page-heading"><div><h1 id="page-title">Camera workspace</h1><p id="page-subtitle">Live view, scene descriptions and everything in between.</p></div><span id="connection" class="connection-status"><i></i> Connecting to Pi</span></div>
+      <section id="workspace-view" class="view">
+        <div class="workbench">
+          <section class="camera-panel panel">
+            <div class="panel-top"><div class="panel-title"><svg><use href="#camera-icon"/></svg><h2>Camera</h2><span class="text-tag">CSI</span></div><div class="view-switch" role="group" aria-label="Camera view"><button id="view-live" class="selected">Live view</button><button id="view-captured">Last photo</button></div></div>
+            <div class="camera-viewer" id="camera-viewer">
+              <img id="live-image" alt="Live view from the Raspberry Pi camera" hidden>
+              <img id="captured-image" alt="Selected captured photograph" hidden>
+              <div id="camera-placeholder" class="camera-placeholder"><svg><use href="#camera-icon"/></svg><strong id="camera-placeholder-title">Starting the camera</strong><p id="camera-placeholder-detail">The live feed will appear here.</p></div>
+              <div class="viewer-top"><span id="feed-badge" class="feed-badge"><i></i> CONNECTING</span><span id="frame-size" class="frame-meta">1280 × 960</span></div>
+              <div class="viewer-bottom"><span id="feed-detail">Waiting for first frame</span><button id="expand-photo" class="viewer-button" aria-label="Open photo preview"><svg><use href="#expand-icon"/></svg></button></div>
+            </div>
+            <div class="camera-toolbar"><button id="take-photo" class="button primary"><svg><use href="#camera-icon"/></svg>Capture & describe</button><button id="toggle-live" class="button secondary"><span id="live-toggle-icon" aria-hidden="true">Ⅱ</span><span id="live-toggle-label">Pause live view</span></button><label class="audio-toggle"><input id="speak" type="checkbox" checked><svg><use href="#volume-icon"/></svg>Play audio on Pi</label></div>
+            <p id="request-error" class="inline-error" role="alert" hidden></p>
+            <div class="camera-note"><span class="small-led" id="preview-led"></span><span id="camera-note">Live frames stay on your local network. Only captured photos are analysed.</span></div>
+          </section>
+          <aside class="flow-column">
+            <section class="panel flow-panel"><div class="panel-top"><h2>Live flow</h2><span id="flow-state" class="status-label">Idle</span></div><p id="flow-context" class="flow-context">Waiting for a command</p><ol id="pipeline" class="pipeline" aria-label="Current processing flow"></ol><div class="flow-footer"><span id="queue-depth">No commands queued</span><span id="flow-elapsed">—</span></div></section>
+            <section class="panel system-panel"><div class="panel-top"><h2>Device status</h2><span id="health-label" class="quiet-status">Online</span></div><dl class="status-list"><div><dt>Camera</dt><dd id="camera-status">Starting</dd></div><div><dt>Voice input</dt><dd id="mic-status">Checking</dd></div><div><dt>Audio output</dt><dd id="output-status">Headphones / auto</dd></div><div><dt>Memory available</dt><dd id="memory-status">—</dd></div></dl><p id="runtime-detail" class="device-notice" role="status" aria-live="polite">Connecting to the assistant…</p></section>
+          </aside>
+          <section class="panel result-panel"><div class="panel-top"><div><h2>Scene description</h2><p id="selected-time" class="panel-caption">Your captured scene and response</p></div><button id="repeat" class="text-button"><svg><use href="#volume-icon"/></svg>Replay</button></div><div class="result-body"><button id="result-photo-button" class="result-thumbnail" aria-label="Preview captured photo" hidden><img id="result-photo" alt=""></button><div><span id="answer-status" class="answer-status">READY TO CAPTURE</span><p id="answer" class="answer-text">Capture a photo to get a description of the scene.</p></div></div><details class="conversation-details"><summary>Command & conversation <span id="message-count">0 messages</span></summary><div id="conversation" class="conversation"></div><ol id="session-steps" class="session-steps" aria-label="Session processing history"></ol></details><form id="command-form" class="command-form"><label class="sr-only" for="command-input">Send a command</label><input id="command-input" placeholder="Enter a command, e.g. click photo or repeat" maxlength="200" autocomplete="off"><button class="send-button" type="submit" aria-label="Send command"><svg><use href="#arrow-icon"/></svg></button></form><div class="result-footer"><span>Voice command: “Hey bot, click photo”</span><button id="delete-session" class="danger-text" hidden>Delete session</button></div></section>
+          <section class="panel activity-panel"><div class="panel-top"><h2>Live activity</h2><span class="live-updates"><i></i> Live updates</span></div><div id="activity" class="activity"><p class="empty-note">Activity appears as commands are processed.</p></div></section>
+        </div>
+        <section class="recent-section"><div class="section-heading"><div><h2>Recent captures</h2><p>Photos and their descriptions, saved on your Pi.</p></div><button id="view-all-sessions" class="text-button">View all sessions <svg><use href="#arrow-icon"/></svg></button></div><div id="recent-captures" class="recent-grid"><p class="empty-note">Your first capture will appear here.</p></div></section>
+      </section>
+      <section id="sessions-view" class="view" hidden><div class="panel sessions-panel"><div class="panel-top"><h2>Session history <span id="history-total" class="text-tag">0</span></h2><label class="search-field"><span class="sr-only">Search loaded sessions</span><input id="session-search" placeholder="Search loaded sessions…" type="search"></label></div><div id="history" class="history-table"></div><div class="history-footer"><p id="retention"></p><button id="load-more" class="button secondary" hidden>Load older sessions</button></div></div></section>
+      <section id="device-view" class="view" hidden><div class="device-grid"><section class="panel"><div class="panel-top"><h2>Raspberry Pi</h2><span class="status-label">Local device</span></div><dl id="device-details" class="device-details"></dl></section><section class="panel"><div class="panel-top"><h2>Current processes</h2><span class="quiet-status">Updated live</span></div><div id="processes" class="process-list"></div></section><section class="panel network-panel"><div class="panel-top"><h2>Open on another device</h2><span class="status-label">Same Wi-Fi</span></div><div class="network-body"><p>Connect your phone or laptop to the same home Wi-Fi, then open this full address in its browser:</p><a id="network-url" class="network-url" href="/">Loading address…</a><p>Use <strong>http://</strong> and include the port number. Sign in with your dashboard password; it is separate from the Pi’s SSH password.</p><p>If the page cannot be reached, check that the device is on the main Wi-Fi rather than a guest network. A VPN or your router’s device-isolation setting may prevent local access.</p></div></section></div></section>
+      <footer><span>SceneVoice · Local vision assistant</span><span>AI descriptions can be inaccurate. Continue using your usual mobility aids.</span></footer>
+    </main>
+  </div>
+</div>
+<dialog id="photo-dialog" class="photo-dialog"><div class="dialog-top"><h2 id="dialog-title">Photo preview</h2><button id="close-preview" class="icon-button" aria-label="Close photo preview"><svg><use href="#close-icon"/></svg></button></div><img id="dialog-photo" alt="Full-size preview of the captured photograph"><p id="dialog-description"></p><a id="download-photo" class="text-button" download>Download photo</a></dialog>
+</body></html>

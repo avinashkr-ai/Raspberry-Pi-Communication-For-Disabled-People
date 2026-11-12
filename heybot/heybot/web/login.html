@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sign in · SceneVoice</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static',filename='logo.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static',filename='theme.css') }}">
+  <meta name="theme-color" content="#0e141e">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <div class="login-identity"><img src="{{ url_for('static',filename='logo.svg') }}" width="52" height="52" alt="SceneVoice camera and sound logo"><div>SceneVoice<span>PHOTO TO VOICE</span></div></div>
+    <h1>Your camera workspace</h1>
+    <p class="muted">Sign in to take photos, hear scene descriptions, and browse your history on this Raspberry Pi.</p>
+    <form method="post">
+      <input type="hidden" name="csrf" value="{{ session.csrf }}">
+      <label for="password">Dashboard password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+      {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+      <button class="primary wide" type="submit">Open SceneVoice <span aria-hidden="true">↗</span></button>
+    </form>
+    <p class="fine">No username is required. Use your dashboard password, which is separate from your SSH password.</p>
+    <p class="wake-hint">Voice command: “Hey bot, click photo”</p>
+  </main>
+</body>
+</html>
